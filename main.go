@@ -42,9 +42,9 @@ func isFileNameValid(fileName string) bool {
 }
 
 func createFirestoreClient(ctx context.Context) *firestore.Client {
-	saPath := "path/to/your-service-account-key.json"
+	saPath := "./google-services.json"
 
-	client, err := firestore.NewClient(ctx, "your-project-id", option.WithCredentialsFile(saPath))
+	client, err := firestore.NewClient(ctx, os.Getenv("PROJECT_ID"), option.WithCredentialsFile(saPath))
 	if err != nil {
 		log.Fatalf("Failed to create Firestore client: %v", err)
 	}
@@ -61,8 +61,8 @@ func SaveImageToFirestore(ctx context.Context, client *firestore.Client, img *Im
 }
 
 func createLineBotClient() *linebot.Client {
-	channelSecret := "your_channel_secret"
-	channelAccessToken := "your_channel_access_token"
+	channelSecret := os.Getenv("CHANNEL_SECRET")
+	channelAccessToken := os.Getenv("ACCESS_TOKEN")
 
 	bot, err := linebot.New(channelSecret, channelAccessToken)
 	if err != nil {
@@ -146,7 +146,8 @@ func main() {
 						imageData: img,
 					}
 
-					_, err = lineBotClient.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("画像を受け取りました。ファイル名を入力してください。")).Do()
+					replyText := "画像を受け取りました。ファイル名を入力してください。"
+					_, err = lineBotClient.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(replyText)).Do()
 					if err != nil {
 						log.Printf("Failed to reply message: %v", err)
 					}
@@ -155,7 +156,8 @@ func main() {
 						fileName := message.Text
 
 						if !isFileNameValid(fileName) {
-							_, err = lineBotClient.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("無効なファイル名です。もう一度入力してください。")).Do()
+							replyText := "無効なファイル名です。もう一度入力してください。"
+							_, err = lineBotClient.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(replyText)).Do()
 							if err != nil {
 								log.Printf("Failed to reply message: %v", err)
 							}
@@ -175,7 +177,7 @@ func main() {
 						}
 
 						// Upload PDF to Google Cloud Storage
-						bucketName := "your-bucket-name"
+						bucketName := "img2pdf-linebot"
 						objectName := userID + "/" + pdfPath
 						err = uploadToCloudStorage(ctx, bucketName, objectName, pdfPath)
 						if err != nil {
