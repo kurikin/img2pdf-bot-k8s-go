@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: linebot-k8s-go
-        image: gcr.io/PROJECT_ID/linebot-k8s-go:v1
+        image: asia-northeast1-docker.pkg.dev/img2pdf-linebot-k8s-go/docker-repository/linebot-k8s-go:v1
         ports:
         - containerPort: 8080
 

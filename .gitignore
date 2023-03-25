@@ -1,2 +1,3 @@
 .idea
 .vscode
+k8s-deployment.yaml
