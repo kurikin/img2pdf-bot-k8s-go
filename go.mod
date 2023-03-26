@@ -5,6 +5,7 @@ go 1.19
 require (
 	cloud.google.com/go/firestore v1.9.0
 	cloud.google.com/go/storage v1.30.1
+	github.com/joho/godotenv v1.5.1
 	github.com/jung-kurt/gofpdf v1.16.2
 	github.com/line/line-bot-sdk-go v7.8.0+incompatible
 	google.golang.org/api v0.114.0

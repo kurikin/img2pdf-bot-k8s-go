@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -11,6 +12,7 @@ import (
 
 	"cloud.google.com/go/firestore"
 	"cloud.google.com/go/storage"
+	"github.com/joho/godotenv"
 	"github.com/jung-kurt/gofpdf"
 	"github.com/line/line-bot-sdk-go/linebot"
 	"google.golang.org/api/option"
@@ -29,6 +31,14 @@ type UserState struct {
 }
 
 var userStates = make(map[string]*UserState)
+
+func loadEnv() {
+	err := godotenv.Load(".env")
+
+	if err != nil {
+		fmt.Printf("Failed to load .env: %v", err)
+	}
+}
 
 func isFileNameValid(fileName string) bool {
 	trimmed := strings.TrimSpace(fileName)
@@ -111,6 +121,7 @@ func convertImageToPDF(imagePath, pdfPath string) error {
 }
 
 func main() {
+	loadEnv()
 	ctx := context.Background()
 	firestoreClient := createFirestoreClient(ctx)
 	lineBotClient := createLineBotClient()
